@@ -46,12 +46,12 @@ public class AccountsController {
 	@Value("${build.version}")
 	private String buildVersion;
 	
-	private final IAccountsService iAccountsService;
-	
 	private final AccountsContactInfoDto accountsContactInfoDto;
 	
 	@Autowired
 	private Environment environment;
+	
+	private final IAccountsService iAccountsService;
 	
 	@Operation(
 			summary = "Create Account REST API",

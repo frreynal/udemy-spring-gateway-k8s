@@ -1,6 +1,7 @@
 package com.eazybytes.cards.controller;
 
 import com.eazybytes.cards.constants.CardsConstants;
+import com.eazybytes.cards.dto.AccountsContactInfoDto;
 import com.eazybytes.cards.dto.CardsDto;
 import com.eazybytes.cards.dto.ErrorResponseDto;
 import com.eazybytes.cards.dto.ResponseDto;
@@ -14,6 +15,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -30,11 +35,18 @@ import org.springframework.web.bind.annotation.*;
 )
 @RestController
 @RequestMapping(path = "/api", produces = {MediaType.APPLICATION_JSON_VALUE})
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Validated
 public class CardsController {
 
-    private ICardsService iCardsService;
+    private final ICardsService iCardsService;
+  
+  @Value("${build.version}")
+  private String buildVersion;
+  
+  private final AccountsContactInfoDto accountsContactInfoDto;
+  
+  private final Environment environment;
 
     @Operation(
             summary = "Create Card REST API",
@@ -160,5 +172,40 @@ public class CardsController {
                     .body(new ResponseDto(CardsConstants.STATUS_417, CardsConstants.MESSAGE_417_DELETE));
         }
     }
-
+  
+  
+  @Operation(
+      summary = "Get Build information",
+      description = "Get Build information that is deployed into accounts microservice"
+  )
+  @GetMapping("/build-info")
+  public ResponseEntity<String> getBuildInfo() {
+    return ResponseEntity
+        .status(HttpStatus.OK)
+        .body(buildVersion);
+  }
+  
+  @Operation(
+      summary = "Get Java version",
+      description = "Get Java versions details that is installed into accounts microservice"
+  )
+  @GetMapping("/java-version")
+  public ResponseEntity<String> getJavaVersion() {
+    return ResponseEntity
+        .status(HttpStatus.OK)
+        .body(environment.getProperty("JAVA_HOME"));
+  }
+  
+  @Operation(
+      summary = "Get Contact Info",
+      description = "Contact Info details that can be reached out in case of any issues"
+  )
+  @GetMapping("/contact-info")
+  public ResponseEntity<AccountsContactInfoDto> getContactInfo() {
+    return ResponseEntity
+        .status(HttpStatus.OK)
+        .body(accountsContactInfoDto);
+  }
+  
+  
 }
