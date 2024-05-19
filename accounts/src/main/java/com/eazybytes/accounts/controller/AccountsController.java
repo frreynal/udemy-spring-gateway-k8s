@@ -1,6 +1,7 @@
 package com.eazybytes.accounts.controller;
 
 import com.eazybytes.accounts.constants.AccountsConstants;
+import com.eazybytes.accounts.dto.AccountsContactInfoDto;
 import com.eazybytes.accounts.dto.CustomerDto;
 import com.eazybytes.accounts.dto.ErrorResponseDto;
 import com.eazybytes.accounts.dto.ResponseDto;
@@ -14,6 +15,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -34,11 +39,19 @@ import java.util.Map;
 )
 @RestController
 @RequestMapping(path = "/api", produces = {MediaType.APPLICATION_JSON_VALUE})
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Validated
 public class AccountsController {
 	
-	private IAccountsService iAccountsService;
+	@Value("${build.version}")
+	private String buildVersion;
+	
+	private final IAccountsService iAccountsService;
+	
+	private final AccountsContactInfoDto accountsContactInfoDto;
+	
+	@Autowired
+	private Environment environment;
 	
 	@Operation(
 			summary = "Create Account REST API",
@@ -88,8 +101,8 @@ public class AccountsController {
 	public ResponseEntity<CustomerDto> fetchAccountDetails(
 			@RequestHeader Map<String, String> headers,
 			@RequestParam
-	                                                       @Pattern(regexp = "(^$|[0-9]{10})", message = "Mobile number must be 10 digits !!")
-	                                                       String mobileNumber) {
+			@Pattern(regexp = "(^$|[0-9]{10})", message = "Mobile number must be 10 digits !!")
+			String mobileNumber) {
 		
 		CustomerDto customerDto = iAccountsService.fetchAccount(mobileNumber);
 		return ResponseEntity.status(HttpStatus.OK).body(customerDto);
@@ -167,6 +180,39 @@ public class AccountsController {
 					.status(HttpStatus.EXPECTATION_FAILED)
 					.body(new ResponseDto(AccountsConstants.STATUS_417, AccountsConstants.MESSAGE_417_DELETE));
 		}
+	}
+	
+	@Operation(
+			summary = "Get Build information",
+			description = "Get Build information that is deployed into accounts microservice"
+	)
+	@GetMapping("/build-info")
+	public ResponseEntity<String> getBuildInfo() {
+		return ResponseEntity
+				.status(HttpStatus.OK)
+				.body(buildVersion);
+	}
+	
+	@Operation(
+			summary = "Get Java version",
+			description = "Get Java versions details that is installed into accounts microservice"
+	)
+	@GetMapping("/java-version")
+	public ResponseEntity<String> getJavaVersion() {
+		return ResponseEntity
+				.status(HttpStatus.OK)
+				.body(environment.getProperty("JAVA_HOME"));
+	}
+	
+	@Operation(
+			summary = "Get Contact Info",
+			description = "Contact Info details that can be reached out in case of any issues"
+	)
+	@GetMapping("/contact-info")
+	public ResponseEntity<AccountsContactInfoDto> getContactInfo() {
+		return ResponseEntity
+				.status(HttpStatus.OK)
+				.body(accountsContactInfoDto);
 	}
 	
 	
