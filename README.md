@@ -120,6 +120,20 @@ Learn how to create enterprise and production ready Microservices with Spring, S
 - Istio (Service mesh) - https://istio.io
 
 
+## Hookdeck CLI
+
+Pour ajouter un webhook dans github pour le configserver : taper la commande :
+````
+hookdeck listen 8071 Source
+````
+
+`What path should the events be forwarded to (ie: /webhooks)?` /monitor
+
+`What's your connection label (ie: My API)? ` localhost
+
+Copier l'url donné dans github webhook.
+
+
 ## Maven Commands used in the course
 
 |     Maven Command       |     Description          |
