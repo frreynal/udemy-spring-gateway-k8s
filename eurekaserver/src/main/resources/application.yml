@@ -18,3 +18,22 @@ management:
     health:
       probes:
         enabled: true
+
+eureka:
+  instance:
+    hostname: localhost
+#    ip-address: 127.0.0.1
+    prefer-ip-address: false
+  client:
+    fetchRegistry: false # ce n'est pas eureka qui va fetcher les détails dans le registre pour les autres ms, ce sont les ms eux mêmes qui le feront
+    # le serveur eureka n'appelera jamais les micro services
+    registerWithEureka: false # on ne veut pas que eureka s'enregistre lui-même
+    serviceUrl:
+      defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
+#      defaultZone: ${eureka.instance.ip-address}:${server.port}/eureka/
+
+logging:
+  level:
+    org.springframework.cloud.netflix.eureka.server: debug
+    org.springframework.cloud.commons.util.InetUtils: trace
+
