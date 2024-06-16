@@ -6,7 +6,25 @@ https://poleemploi.udemy.com/course/master-microservices-with-spring-docker-kube
 
 https://github.com/eazybytes/microservices/tree/3.2.3
 
+## APACHE BENCHMARK
 
+- Doc ab : https://httpd.apache.org/docs/2.4/programs/ab.html
+- Doc serveur httpd : https://httpd.apache.org/docs/current/platform/windows.html#down
+
+
+- Démarrer le serveur apache httpd :
+
+Aller dans `D:\Tools\httpd-2.4.59-240605-win64-VS17\Apache24\bin`
+
+Lancer le serveur : `httpd.exe`
+
+- Lancer le benchmark :
+
+````
+ab -n 10 -c 2 -v 3 http://localhost:8072/eazybank/cards/api/build-info
+````
+
+Avec ***-c*** : concurrency 2,  ***-n*** : nb de requêtes, et l'url du endpoint à tester
 
 ## Getting Started
 

@@ -6,6 +6,8 @@ import com.eazybytes.accounts.dto.CustomerDto;
 import com.eazybytes.accounts.dto.ErrorResponseDto;
 import com.eazybytes.accounts.dto.ResponseDto;
 import com.eazybytes.accounts.service.IAccountsService;
+import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
+import io.github.resilience4j.retry.annotation.Retry;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -14,18 +16,17 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Pattern;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.function.ServerRequest;
 
 import java.util.Map;
 
@@ -41,6 +42,7 @@ import java.util.Map;
 @RequestMapping(path = "/api", produces = {MediaType.APPLICATION_JSON_VALUE})
 @RequiredArgsConstructor
 @Validated
+@Slf4j
 public class AccountsController {
 	
 	@Value("${build.version}")
@@ -182,15 +184,26 @@ public class AccountsController {
 		}
 	}
 	
+	@SneakyThrows
 	@Operation(
 			summary = "Get Build information",
 			description = "Get Build information that is deployed into accounts microservice"
 	)
 	@GetMapping("/build-info")
+	@Retry(name = "getBuildInfo", fallbackMethod = "getBuildInfoFallback")
 	public ResponseEntity<String> getBuildInfo() {
+		log.info("Accounts API : getBuildInfo()");
+//		throw new TimeoutException();
 		return ResponseEntity
 				.status(HttpStatus.OK)
 				.body(buildVersion);
+	}
+	
+	public ResponseEntity<String> getBuildInfoFallback(Throwable throwable) {
+		log.info("Accounts API : getBuildInfoFallback()");
+		return ResponseEntity
+				.status(HttpStatus.INTERNAL_SERVER_ERROR)
+				.body("FALLBACK !!");
 	}
 	
 	@Operation(
@@ -198,10 +211,18 @@ public class AccountsController {
 			description = "Get Java versions details that is installed into accounts microservice"
 	)
 	@GetMapping("/java-version")
+	@RateLimiter(name = "getJavaVersion", fallbackMethod = "getJavaVersionFallback")
 	public ResponseEntity<String> getJavaVersion() {
 		return ResponseEntity
 				.status(HttpStatus.OK)
 				.body(environment.getProperty("JAVA_HOME"));
+	}
+	
+	
+	public ResponseEntity<String> getJavaVersionFallback(Throwable throwable) {
+		return ResponseEntity
+				.status(HttpStatus.OK)
+				.body("Java version FALLBACK !!!");
 	}
 	
 	@Operation(

@@ -24,6 +24,11 @@ spring:
     username: "guest"
     password: "guest"
 
+  cloud:
+    openfeign:
+      circuitbreaker:
+        enabled: true
+
 management:
   endpoints:
     web:
@@ -59,3 +64,31 @@ info:
 logging:
   level:
     org.springframework.cloud.netflix.eureka: debug
+
+resilience4j.circuitbreaker:
+  configs:
+    default:
+      slidingWindowSize: 10
+      permittedNumberOfCallsInHalfOpenState: 2
+      failureRateThreshold: 50 # % de requêtes en échec avant de passer à open
+      waitDurationInOpenState: 10000 # (ms) attente avant de passer de open à half-open
+
+resilience4j.retry:
+  configs:
+    default:
+      maxAttempts: 3
+      waitDuration: 700
+      enableExponentialBackoff: true
+      exponentialBackoffMultiplier: 2
+      ignoreExceptions:
+        - java.lang.NullPointerException
+#      retryExceptions:  on met soit retry soit ignoreException
+#        - java.util.concurrent.TimeoutException
+
+
+resilience4j.ratelimiter:
+  configs:
+    default:
+      timeoutDuration: 5000ms
+      limitRefreshPeriod: 5000ms
+      limitForPeriod: 3
