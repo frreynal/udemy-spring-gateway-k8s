@@ -30,6 +30,10 @@ spring:
     username: "guest"
     password: "guest"
 
+  metrics:
+    tags:
+      application: ${spring.application.name} # nom pour grouper toutes les métriques prom
+
 management:
   endpoints:
     web:
@@ -61,4 +65,10 @@ info:
     name: "loans"
     description: "Eazy Bank Loans Application"
     version: "1.0.0"
+
+logging:
+  level:
+    com.eazybytes: DEBUG
+  pattern:
+    level: "%5p [${spring.application.name},%X{trace_id},%X{span_id}]"
 

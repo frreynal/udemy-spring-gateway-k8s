@@ -24,6 +24,10 @@ spring:
     username: "guest"
     password: "guest"
 
+  metrics:
+    tags:
+      application: ${spring.application.name} # nom pour grouper toutes les métriques prom
+
 management:
   endpoints:
     web:
@@ -59,3 +63,5 @@ info:
 logging:
   level:
     org.springframework.cloud.netflix.eureka: debug
+  pattern:
+    level: "%5p [${spring.application.name},%X{trace_id},%X{span_id}]"

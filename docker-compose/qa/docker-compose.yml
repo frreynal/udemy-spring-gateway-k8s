@@ -46,7 +46,7 @@ services:
       service: network-deploy-service
 
   configserver:
-    image: "freyy/configserver:s4"
+    image: "freyy/configserver:v1"
     container_name: configserver-ms
     ports:
       - "8071:8071"
@@ -64,7 +64,7 @@ services:
       service: microservice-base-config
 
   accounts:
-    image: "freyy/accounts:s4"
+    image: "freyy/accounts:v1"
     container_name: accounts-ms
     ports:
       - "8080:8080"
@@ -81,7 +81,7 @@ services:
       service: microservice-configserver-config
 
   loans:
-    image: "freyy/loans:s4"
+    image: "freyy/loans:v1"
     container_name: loans-ms
     ports:
       - "8090:8090"
@@ -98,7 +98,7 @@ services:
       service: microservice-configserver-config
 
   cards:
-    image: "freyy/cards:s4"
+    image: "freyy/cards:v1"
     container_name: cards-ms
     ports:
       - "9000:9000"

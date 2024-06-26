@@ -16,6 +16,7 @@
   <properties>
     <java.version>17</java.version>
     <spring-cloud.version>2023.0.0</spring-cloud.version>
+    <otelVersion>1.32.0</otelVersion>
   </properties>
   <dependencies>
     <dependency>
@@ -27,6 +28,12 @@
       <artifactId>spring-cloud-config-server</artifactId>
     </dependency>
     <dependency>
+      <groupId>io.opentelemetry.javaagent</groupId>
+      <artifactId>opentelemetry-javaagent</artifactId>
+      <version>${otelVersion}</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
       <groupId>org.springframework.cloud</groupId>
       <artifactId>spring-cloud-starter-bus-amqp</artifactId>
     </dependency>
@@ -34,6 +41,11 @@
       <groupId>org.springframework.cloud</groupId>
       <artifactId>spring-cloud-config-monitor</artifactId>
     </dependency>
+    <dependency>
+      <groupId>io.micrometer</groupId>
+      <artifactId>micrometer-registry-prometheus</artifactId>
+    </dependency>
+
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-test</artifactId>
@@ -64,7 +76,7 @@
         <version>3.4.1</version>
         <configuration>
           <to>
-            <image>freyy/${project.artifactId}:s4</image>
+            <image>freyy/${project.artifactId}:v1</image>
           </to>
         </configuration>
       </plugin>

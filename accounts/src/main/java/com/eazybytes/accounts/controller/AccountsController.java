@@ -75,6 +75,7 @@ public class AccountsController {
 	)
 	@PostMapping("/create")
 	public ResponseEntity<ResponseDto> createAccount(@Valid @RequestBody CustomerDto customerDto) {
+		log.info("createAccount()");
 		iAccountsService.createAccount(customerDto);
 		return ResponseEntity
 				.status(HttpStatus.CREATED)
@@ -213,6 +214,7 @@ public class AccountsController {
 	@GetMapping("/java-version")
 	@RateLimiter(name = "getJavaVersion", fallbackMethod = "getJavaVersionFallback")
 	public ResponseEntity<String> getJavaVersion() {
+		log.info("getJavaVersion()");
 		return ResponseEntity
 				.status(HttpStatus.OK)
 				.body(environment.getProperty("JAVA_HOME"));
@@ -231,6 +233,7 @@ public class AccountsController {
 	)
 	@GetMapping("/contact-info")
 	public ResponseEntity<AccountsContactInfoDto> getContactInfo() {
+		log.info("getContactInfo()");
 		return ResponseEntity
 				.status(HttpStatus.OK)
 				.body(accountsContactInfoDto);

@@ -38,4 +38,6 @@ logging:
   level:
     org.springframework.cloud.netflix.eureka.server: debug
     org.springframework.cloud.commons.util.InetUtils: trace
+  pattern:
+    level: "%5p [${spring.application.name},%X{trace_id},%X{span_id}]"
 

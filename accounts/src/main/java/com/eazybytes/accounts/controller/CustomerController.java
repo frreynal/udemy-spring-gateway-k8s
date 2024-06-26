@@ -10,9 +10,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.Pattern;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpStatus;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -25,10 +24,10 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping(path = "/api", produces = {MediaType.APPLICATION_JSON_VALUE})
 @Validated
+@Slf4j
 public class CustomerController {
 	
 	private final ICustomersService iCustomersService;
-	private static final Logger logger = LoggerFactory.getLogger(CustomerController.class);
 	
 	
 	public CustomerController(ICustomersService iCustomersService) {
@@ -59,8 +58,11 @@ public class CustomerController {
 	                                                               @RequestParam @Pattern(regexp = "(^$|[0-9]{10})",
 			                                                               message = "Mobile number must be 10 digits")
 	                                                               String mobileNumber) {
-		logger.debug("eazyBank-correlation-id found: {} ", correlationId);
+		log.debug("eazyBank-correlation-id found: {} ", correlationId);
+		log.info("fetchCustomerDetails() start");
 		CustomerDetailsDto customerDetailsDto = iCustomersService.fetchCustomerDetails(mobileNumber, correlationId);
+		log.info("fetchCustomerDetails() stop");
+		
 		return ResponseEntity.status(HttpStatus.SC_OK).body(customerDetailsDto);
 		
 	}
