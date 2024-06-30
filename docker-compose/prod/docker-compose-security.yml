@@ -118,8 +118,6 @@ services:
   accounts:
     image: "freyy/accounts:v1"
     container_name: accounts-ms
-    ports:
-      - "8080:8080"
     depends_on:
       accountsdb:
         condition: service_healthy
@@ -145,8 +143,6 @@ services:
   loans:
     image: "freyy/loans:v1"
     container_name: loans-ms
-    ports:
-      - "8090:8090"
     depends_on:
       loansdb:
         condition: service_healthy
@@ -171,8 +167,6 @@ services:
   cards:
     image: "freyy/cards:v1"
     container_name: cards-ms
-    ports:
-      - "9000:9000"
     depends_on:
       cardsdb:
         condition: service_healthy
@@ -218,7 +212,7 @@ services:
       SPRING_DATA_REDIS_TIMEOUT: 1s
       OTEL_SERVICE_NAME: "gatewayserver"
       OTEL_JAVAAGENT_ENABLED: false
-      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK-SET-URI: "http://localhost:7080/realms/master/protocol/openid-connect/certs"
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK-SET-URI: "http://keycloak:8080/realms/master/protocol/openid-connect/certs"
     extends:
       file: common-config.yml
       service: microservice-eureka-config
