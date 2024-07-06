@@ -178,6 +178,18 @@ services:
       file: common-config.yml
       service: microservice-eureka-config
 
+  message:
+    image: "freyy/message:v1"
+    container_name: message-ms
+    depends_on:
+      rabbit:
+        condition: service_healthy
+    environment:
+      SPRING_RABBITMQ_HOST: "rabbit"
+    extends:
+      file: common-config.yml
+      service: network-deploy-service
+
   gatewayserver:
     image: "freyy/gatewayserver:v1"
     container_name: gatewayserver-ms
@@ -188,12 +200,12 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
-      accounts:
-        condition: service_healthy
-      loans:
-        condition: service_healthy
-      cards:
-        condition: service_healthy
+    #      accounts:
+    #        condition: service_healthy
+    #      loans:
+    #        condition: service_healthy
+    #      cards:
+    #        condition: service_healthy
     environment:
       SPRING_APPLICATION_NAME: "gatewayserver"
       SPRING_DATA_REDIS_CONNECT-TIMEOUT: 2s
@@ -201,6 +213,8 @@ services:
       SPRING_DATA_REDIS_PORT: 6379
       SPRING_DATA_REDIS_TIMEOUT: 1s
       OTEL_SERVICE_NAME: "gatewayserver"
+      OTEL_JAVAAGENT_ENABLED: false
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK-SET-URI: "http://keycloak:8080/realms/master/protocol/openid-connect/certs"
     extends:
       file: common-config.yml
       service: microservice-eureka-config
